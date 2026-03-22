@@ -1,29 +1,32 @@
-FROM node:18-alpine
-
-# Install OpenSSL — required by Prisma on Alpine Linux
-RUN apk add --no-cache openssl
+FROM node:18
 
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
 
-COPY . .
+COPY prisma ./prisma/
 
 RUN npx prisma generate
+
+COPY . .
 
 EXPOSE 3001
 
 CMD ["node", "src/index.js"]
 ```
 
-Then update your **Start Command** in Railway Settings back to just:
-```
-npx prisma generate && npx prisma db push && node src/prisma/seed.js && node src/index.js
-```
+The key changes are:
+- `node:18` instead of `node:18-alpine` — this is the full version of Node that already has OpenSSL built in, no extra install needed
+- `COPY prisma ./prisma/` before `prisma generate` — makes sure the schema file is there before Prisma tries to read it
 
-Then save the Dockerfile and push to GitHub:
+**Save it, push to GitHub:**
 ```
 git add .
-git commit -m "fix openssl for prisma on alpine"
+git commit -m "switch to full node image"
 git push
+```
+
+**And double check your Railway Settings → Start Command is set to:**
+```
+npx prisma generate && npx prisma db push && node src/prisma/seed.js && node src/index.js
