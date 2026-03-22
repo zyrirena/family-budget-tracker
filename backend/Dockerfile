@@ -16,17 +16,10 @@ EXPOSE 3001
 CMD ["node", "src/index.js"]
 ```
 
-The key changes are:
-- `node:18` instead of `node:18-alpine` — this is the full version of Node that already has OpenSSL built in, no extra install needed
-- `COPY prisma ./prisma/` before `prisma generate` — makes sure the schema file is there before Prisma tries to read it
+The file must contain **only** those 13 lines. No extra text, no backticks, no explanations — just the raw Dockerfile instructions.
 
-**Save it, push to GitHub:**
+**Save it, then push:**
 ```
 git add .
-git commit -m "switch to full node image"
+git commit -m "fix dockerfile"
 git push
-```
-
-**And double check your Railway Settings → Start Command is set to:**
-```
-npx prisma generate && npx prisma db push && node src/prisma/seed.js && node src/index.js
