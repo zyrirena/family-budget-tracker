@@ -7,8 +7,8 @@ RUN npm install
 
 COPY . .
 
-RUN npx prisma generate
-
+# We specify the schema path here
+RUN npx prisma generate --schema=./prisma/schema.prisma
 EXPOSE 3001
 
 CMD ["node", "src/index.js"]
